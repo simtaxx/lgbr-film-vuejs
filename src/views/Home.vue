@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="home__table-container">
-      <table class="table is-fullwidth has-background-dark is-narrow is-hoverable">
+      <table class="table has-background-dark is-narrow is-hoverable">
         <thead>
           <tr>
             <th
@@ -53,23 +53,23 @@
         </tbody>
       </table>
     </div>
-    <nav v-if="limit !== 0" class="pagination is-centered" role="navigation" aria-label="pagination">
+    <nav class="pagination is-centered ${}" role="navigation" aria-label="pagination">
       <ul class="pagination-list">
-        <li v-if="nbPages > 1" @click="navigate(1)" class="item-hover">
-          <p class="pagination-link">1</p>
+        <li v-if="nbPages > 1 && limit !== 0" @click="navigate(1)" class="item-hover">
+          <p :class="`pagination-link ${currentPage === 1 ? 'currentPage' : ''}`">1</p>
         </li>
-        <li><span class="pagination-ellipsis">&hellip;</span></li>
+        <li v-if="limit !== 0"><span class="pagination-ellipsis">&hellip;</span></li>
         <li
           v-for="page in pagination"
           :key="`page-${page}`"
           @click="navigate(page)"
           class="item-hover"
         >
-          <p class="pagination-link">{{ page }}</p>
+          <p :class="`pagination-link ${page === currentPage ? 'currentPage' : ''}`">{{ page }}</p>
         </li>
-        <li><span class="pagination-ellipsis">&hellip;</span></li>
-        <li class="item-hover" @click="navigate(nbPages)">
-          <p class="pagination-link">{{ nbPages }}</p>
+        <li v-if="limit !== 0"><span class="pagination-ellipsis">&hellip;</span></li>
+        <li v-if="limit !== 0" class="item-hover" @click="navigate(nbPages)">
+          <p :class="`pagination-link ${currentPage === nbPages ? 'currentPage' : ''}`">{{ nbPages }}</p>
         </li>
       </ul>
     </nav>
@@ -107,7 +107,7 @@ export default {
       films: [],
       nbPages: 0,
       limit: 10,
-      page: 1,
+      currentPage: 1,
       orderType: 1,
       orderByDesc: 0,
       dropDownIsOpened: false,
@@ -123,14 +123,15 @@ export default {
     },
     pagination() {
       const pages = [];
-      if (this.page - 1 > 1) {
-        pages.push(this.page - 1);
+      if (this.limit === 0) return [1];
+      if (this.currentPage - 1 > 1) {
+        pages.push(this.currentPage - 1);
       }
-      if (this.page !== 1 && this.page !== this.nbPages) {
-        pages.push(this.page);
+      if (this.currentPage !== 1 && this.currentPage !== this.nbPages) {
+        pages.push(this.currentPage);
       }
-      if (this.page + 1 <= this.nbPages - 1 && this.page !== this.nbPages) {
-        pages.push(this.page + 1);
+      if (this.currentPage + 1 <= this.nbPages - 1 && this.currentPage !== this.nbPages) {
+        pages.push(this.currentPage + 1);
       }
       return pages;
     }
@@ -142,16 +143,18 @@ export default {
 
   methods: {
     refresh() {
-      const { limit, page, orderType, orderByDesc } = this;
+      const { limit, currentPage, orderType, orderByDesc } = this;
       this.isLoading = true;
       axios
-        .get(`https://film-api-lgbdr.herokuapp.com/api/film?limit=${limit}&page=${page}&orderType=${orderType}&orderByDesc=${orderByDesc}`)
+        .get(`https://film-api-lgbdr.herokuapp.com/api/film?limit=${limit}&page=${currentPage}&orderType=${orderType}&orderByDesc=${orderByDesc}`)
         .then(({ data }) => {
           this.films = data.films;
           this.nbPages = data.nbPages;
           setTimeout(() => {
             this.isLoading = false;
           }, 500);
+        }).catch(() => {
+          this.isLoading = false;
         });
     },
     updateFilters(categoryId) {
@@ -165,12 +168,12 @@ export default {
     updateLimitValue(value) {
       if (value === this.limit) return;
       this.limit = value;
-      this.page = 1;
+      this.currentPage = 1;
       this.refresh();
     },
     navigate(page) {
-      if (page === this.page) return;
-      this.page = page;
+      if (page === this.currentPage) return;
+      this.currentPage = page;
       this.refresh();
     }
   },
@@ -184,8 +187,16 @@ export default {
     width: 100%;
 
     &__table-container {
+      margin-top: 40px;
       height: 80%;
       overflow-y: scroll;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+
+      table {
+        width: 60%;
+      }
 
       thead {
         position: relative;
@@ -206,6 +217,10 @@ export default {
         background-color: rgb(29, 31, 32);
         border-radius: 5px;
       }
+    }
+
+    .currentPage {
+      background-color: rgb(48, 48, 200);
     }
 
     .dropdown {
