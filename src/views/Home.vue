@@ -183,12 +183,12 @@ export default {
 
 <style lang="scss" scoped>
   .home {
-    height: 100vh;
+    height: calc(100vh - 60px);
     width: 100%;
 
     &__table-container {
       margin-top: 40px;
-      height: 80%;
+      height: 85%;
       overflow-y: scroll;
       display: flex;
       justify-content: center;
@@ -207,6 +207,15 @@ export default {
           top: 0
         }
       }
+    }
+
+    .pagination-link {
+      color: #fafafa;
+    }
+
+    .table.is-hoverable tbody tr:not(.is-selected):hover {
+      background-color: rgb(41, 40, 40);
+      cursor: pointer;
     }
 
     .item-hover {
@@ -228,6 +237,7 @@ export default {
       .dropdown-item {
 
         &:hover {
+          background-color: #7c7a7a;
           cursor: pointer;
         }
       }
