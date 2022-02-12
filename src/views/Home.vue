@@ -107,7 +107,7 @@ export default {
       films: [],
       nbPages: 0,
       limit: 10,
-      page: 10,
+      page: 1,
       orderType: 1,
       orderByDesc: 0,
       dropDownIsOpened: false,
