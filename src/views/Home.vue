@@ -145,7 +145,7 @@ export default {
       const { limit, page, orderType, orderByDesc } = this;
       this.isLoading = true;
       axios
-        .get(`http://localhost:8081/api/film?limit=${limit}&page=${page}&orderType=${orderType}&orderByDesc=${orderByDesc}`)
+        .get(`https://film-api-lgbdr.herokuapp.com/api/film?limit=${limit}&page=${page}&orderType=${orderType}&orderByDesc=${orderByDesc}`)
         .then(({ data }) => {
           this.films = data.films;
           this.nbPages = data.nbPages;
