@@ -152,7 +152,7 @@ export default {
           this.nbPages = data.nbPages;
           setTimeout(() => {
             this.isLoading = false;
-          }, 500);
+          }, 250);
         }).catch(() => {
           this.isLoading = false;
         });
